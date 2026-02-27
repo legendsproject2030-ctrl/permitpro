@@ -1,11 +1,19 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AuthPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-sm text-[#6B7280]">Loading...</div>}>
+      <AuthPageInner />
+    </Suspense>
+  )
+}
+
+function AuthPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [mode, setMode] = useState<'login' | 'signup'>(
@@ -20,7 +28,6 @@ export default function AuthPage() {
   const [strength, setStrength] = useState(0)
 
   useEffect(() => {
-    // Check if already logged in
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) router.replace('/dashboard')
     })
@@ -65,7 +72,6 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left panel */}
       <div className="hidden md:flex w-1/2 bg-[#0F2137] flex-col items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-5" style={{
           backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`,
@@ -81,65 +87,33 @@ export default function AuthPage() {
           </div>
         </div>
       </div>
-
-      {/* Right panel */}
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
           <Link href="/" className="text-sm text-[#6B7280] hover:text-[#1A1A1A] mb-10 block">
-            ← Back to home
+            <- Back to home
           </Link>
           <h1 className="text-2xl font-bold text-[#1A1A1A] mb-1">
             {mode === 'signup' ? 'Create your account' : 'Welcome back'}
           </h1>
           <p className="text-[#6B7280] text-sm mb-8">
-            {mode === 'signup'
-              ? 'Start filing Ontario permits in minutes.'
-              : 'Log in to access your permit sessions.'}
+            {mode === 'signup' ? 'Start filing Ontario permits in minutes.' : 'Log in to access your permit sessions.'}
           </p>
-
           <form onSubmit={handleSubmit} className="space-y-5">
             {mode === 'signup' && (
               <div>
                 <label className="block text-sm font-medium text-[#374151] mb-1.5">First Name</label>
-                <input
-                  type="text"
-                  required
-                  value={firstName}
-                  onChange={e => setFirstName(e.target.value)}
-                  placeholder="Jane"
-                  className="w-full bg-[#F7F7F8] border border-[#E5E7EB] rounded-md px-4 py-3 text-sm placeholder-[#9CA3AF]"
-                />
+                <input type="text" required value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jane" className="w-full bg-[#F7F7F8] border border-[#E5E7EB] rounded-md px-4 py-3 text-sm placeholder-[#9CA3AF]" />
               </div>
             )}
-
             <div>
               <label className="block text-sm font-medium text-[#374151] mb-1.5">Email Address</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="jane@example.com"
-                className="w-full bg-[#F7F7F8] border border-[#E5E7EB] rounded-md px-4 py-3 text-sm placeholder-[#9CA3AF]"
-              />
+              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="jane@example.com" className="w-full bg-[#F7F7F8] border border-[#E5E7EB] rounded-md px-4 py-3 text-sm placeholder-[#9CA3AF]" />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-[#374151] mb-1.5">Password</label>
               <div className="relative">
-                <input
-                  type={showPass ? 'text' : 'password'}
-                  required
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="Minimum 8 characters"
-                  className="w-full bg-[#F7F7F8] border border-[#E5E7EB] rounded-md px-4 py-3 text-sm placeholder-[#9CA3AF] pr-11"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#6B7280]"
-                >
+                <input type={showPass ? 'text' : 'password'} required value={password} onChange={e => setPassword(e.target.value)} placeholder="Minimum 8 characters" className="w-full bg-[#F7F7F8] border border-[#E5E7EB] rounded-md px-4 py-3 text-sm placeholder-[#9CA3AF] pr-11" />
+                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#6B7280]">
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -154,33 +128,19 @@ export default function AuthPage() {
                 </div>
               )}
               {mode === 'login' && (
-                <button type="button" className="text-xs text-[#6B7280] hover:text-[#1B3A5C] mt-1.5 block">
-                  Forgot password?
-                </button>
+                <button type="button" className="text-xs text-[#6B7280] hover:text-[#1B3A5C] mt-1.5 block">Forgot password?</button>
               )}
             </div>
-
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-md">
-                {error}
-              </div>
+              <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-md">{error}</div>
             )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#1B3A5C] text-white py-3 rounded-md font-medium text-sm hover:bg-[#152E4D] disabled:opacity-60"
-            >
+            <button type="submit" disabled={loading} className="w-full bg-[#1B3A5C] text-white py-3 rounded-md font-medium text-sm hover:bg-[#152E4D] disabled:opacity-60">
               {loading ? 'Please wait...' : mode === 'signup' ? 'Create Account' : 'Log In'}
             </button>
           </form>
-
           <p className="text-sm text-[#6B7280] mt-6 text-center">
             {mode === 'signup' ? 'Already have an account? ' : "Don't have an account? "}
-            <button
-              onClick={() => { setMode(mode === 'signup' ? 'login' : 'signup'); setError('') }}
-              className="text-[#1B3A5C] font-medium hover:underline"
-            >
+            <button onClick={() => { setMode(mode === 'signup' ? 'login' : 'signup'); setError('') }} className="text-[#1B3A5C] font-medium hover:underline">
               {mode === 'signup' ? 'Log in' : 'Sign up'}
             </button>
           </p>
