@@ -90,7 +90,7 @@ function AuthPageInner() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
           <Link href="/" className="text-sm text-[#6B7280] hover:text-[#1A1A1A] mb-10 block">
-            <- Back to home
+            ← Back to home
           </Link>
           <h1 className="text-2xl font-bold text-[#1A1A1A] mb-1">
             {mode === 'signup' ? 'Create your account' : 'Welcome back'}
