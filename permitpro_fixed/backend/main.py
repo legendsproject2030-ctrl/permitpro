@@ -1,5 +1,4 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, Depends
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 import anthropic
@@ -11,6 +10,18 @@ from typing import Optional
 from supabase import create_client, Client
 
 app = FastAPI(title="PermitPro API")
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://permitpro-32ft.vercel.app"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.add_middleware(
     CORSMiddleware,
